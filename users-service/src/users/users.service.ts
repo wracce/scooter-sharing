@@ -55,7 +55,7 @@ export class UsersService {
     const days = Math.ceil((endDateDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
 
 
-    const scoterResponse = await fetch(`http://scooters-scooter-service:3002/api/scooters/${scooterId}`,{
+    const scoterResponse = await fetch(`${process.env.GATEWAY_API}/api/scooters/${scooterId}`,{
       method: 'GET',
       headers: {
         'Authorization': token,

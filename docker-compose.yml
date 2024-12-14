@@ -11,7 +11,7 @@ services:
     volumes:
       - ./config/consul/config.json:/etc/consul/config.json
 
-# API GAYTEWAY
+# API GATEWAY
   scooters-gateway:
     container_name: scooters-gateway
     image: traefik:latest
@@ -40,7 +40,7 @@ services:
       - "traefik.http.routers.api.middlewares=jwt-scooters-auth"
       - "traefik.http.middlewares.jwt-scooters-auth.headers.customrequestheaders.scooters-authorization=Bearer .*"
 
-# scooters-broker
+# BROKER
   scooters-broker:
     container_name: scooters-broker
     image: rabbitmq:management
@@ -53,7 +53,7 @@ services:
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq
 
-# scooters-auth
+# AUTH
   scooters-users-db:
     container_name: scooters-users-db
     image: mongo:latest
@@ -85,6 +85,7 @@ services:
       context: ./auth-service
     environment:
       MONGODB_URI: mongodb://admin:admin@scooters-users-db:27017
+      
       SERVER_HOST: scooters-auth-service
       SERVER_PORT: 3000
       CONSUL_HOST: scooters-sd
@@ -146,13 +147,14 @@ services:
       - ./scooter-service:/app
       - ./data/maven:/root/.m2
 
-# scooters-users
+# USERS
   scooters-users-service:
     container_name: scooters-users-service
     build:
       context: ./users-service
     environment:
       MONGODB_URI: mongodb://admin:admin@scooters-users-db:27017
+      GATEWAY_API: http://scooters-gateway:80
       SERVER_HOST: scooters-users-service
       SERVER_PORT: 3001
       CONSUL_HOST: scooters-sd
